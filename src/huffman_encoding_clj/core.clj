@@ -39,14 +39,17 @@
   (concat (chars-sum (:left node))
           (chars-sum (:right node))))
 
-(defn make-leaf [c w]
-  (Leaf. c w))
+(defn make-leaf
+  [[c w]] (->Leaf c w))
 
-(defn make-fork [left right]
-  (Fork. left right
-         (concat (chars-sum left)
-                 (chars-sum right))
-         (+ (weight-sum left)
-            (weight-sum right))))
-
-;; TODO part 2 and 3
+(defn make-fork [t1 t2]
+  (let [weight1 (weight-sum t1)
+        weight2 (weight-sum t2)
+        w-sum (+ weight1 weight2)
+        c-sum (concat
+               (chars-sum t1)
+               (chars-sum t2))
+        [left right] (if (< weight1 weight2) 
+                       [t1 t2]
+                       [t2 t1])]
+    (->Fork left right c-sum w-sum)))
