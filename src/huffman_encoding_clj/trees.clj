@@ -14,6 +14,7 @@
 (defn make-leaf-list [char-map]
   (map make-leaf char-map))
 
+;; TODO not sure this really works. read theory and use tests from patmat
 (defn make-code-tree [str]
   (let [leaf-list (make-leaf-list
                    (get-char-map str))]

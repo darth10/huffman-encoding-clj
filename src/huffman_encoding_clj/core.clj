@@ -20,6 +20,16 @@
     (print-method (:right fork) w)
     (print-simple ">" w)))
 
+(defmulti has-char?
+  (fn [node c]  (class node)))
+
+(defmethod has-char? Leaf
+  [node c] (= (:char node) c))
+
+(defmethod has-char? Fork
+  [node c] (or (has-char? (:left node) c)
+               (has-char? (:right node) c)))
+
 (defmulti weight-sum class)
 
 (defmethod weight-sum Leaf
