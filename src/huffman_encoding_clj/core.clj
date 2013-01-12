@@ -19,25 +19,16 @@
     (print-method (:right fork) w)
     (print-simple ">" w)))
 
-(defmulti has-char?
-  (fn [node c]  (class node)))
+(defmulti get-chars class)
 
-(defmethod has-char? Leaf
-  [node c] (= (:char node) c))
-
-(defmethod has-char? Fork
-  [node c] (or (has-char? (:left node) c)
-               (has-char? (:right node) c)))
-
-(defmulti chars-sum class)
-
-(defmethod chars-sum Leaf
+(defmethod get-chars Leaf
   [node] [(:char node)])
 
-(defmethod chars-sum Fork
-  [node]
-  (concat (chars-sum (:left node))
-          (chars-sum (:right node))))
+(defmethod get-chars Fork
+  [node] (:chars node))
+
+(defn has-char? [node c]
+  (contains? (get-chars node) c))
 
 (defn make-leaf
   [[c w]] (->Leaf c w))
@@ -46,7 +37,7 @@
   (let [weight1 (:weight t1)
         weight2 (:weight t2)
         w-sum (+ weight1 weight2)
-        c-sum (concat (chars-sum t1) (chars-sum t2))
+        c-sum (concat (get-chars t1) (get-chars t2))
         [left right] (if (< weight1 weight2)
                        [t1 t2]
                        [t2 t1])]
