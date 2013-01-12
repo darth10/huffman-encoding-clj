@@ -10,9 +10,7 @@
 
 (defmethod print-method Fork
   [fork w]
-  (let [this (str " "
-                  (:weight fork)
-                  " ")]
+  (let [this (str " " (:weight fork) " ")]
     (print-simple "<" w)
     (print-method (:left fork) w)
     (print-simple this w)
@@ -22,13 +20,15 @@
 (defmulti get-chars class)
 
 (defmethod get-chars Leaf
-  [node] [(:char node)])
+  [node]
+  [(:char node)])
 
 (defmethod get-chars Fork
-  [node] (:chars node))
+  [node]
+  (:chars node))
 
 (defn has-char? [node c]
-  (contains? (get-chars node) c))
+  (not (nil? (some #{c} (get-chars node)))))
 
 (defn make-leaf
   [[c w]] (->Leaf c w))
@@ -42,3 +42,21 @@
                        [t1 t2]
                        [t2 t1])]
     (->Fork left right c-sum w-sum)))
+
+(defmulti find-paths class)
+
+(defn add-to-path [tree path new-path]
+  (find-paths
+   (assoc tree :path (conj path new-path))))
+
+(defmethod find-paths Leaf
+  [node]
+  {(:char node)
+   (reverse (:path node))})
+
+(defmethod find-paths Fork
+  [node]
+  (let [path (:path node)
+        left-path (add-to-path (:left node) path 0)
+        right-path (add-to-path (:right node) path 1)]
+    (concat left-path right-path)))
