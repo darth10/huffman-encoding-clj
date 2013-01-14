@@ -12,7 +12,7 @@
   (into {} (get-char-count (pack-string str))))
 
 (defn make-leaf-list [char-map]
-  (map make-leaf char-map))
+  (sort-by #(:weight %) (map make-leaf char-map)))
 
 (defn has-lesser-weight? [weight]
   #(< (:weight %) weight))
